@@ -2,19 +2,19 @@ from PIL import Image
 import argparse
 import os
 
-def run(args):
-
-    for l in os.listdir(args.path_img):
+def resize_images(path_img, path_output, size_x=512, size_y=512):
+    for l in os.listdir(path_img):
         print('Artwork image file: {}'.format(l))
         if not (l.endswith('.jpg') or l.endswith('.png')):
             continue
-        img = Image.open(os.path.join(args.path_img, l))
+        img = Image.open(os.path.join(path_img, l))
         print(img.size)
         img_resized = img.resize(
-            (args.size_x,args.size_y)
+            (size_x,size_y)
         )
 
-        img_resized.save(os.path.join(args.path_output, l))
+        img_resized.save(os.path.join(path_output, l))
+   
 
 if __name__ == '__main__':
 
@@ -27,4 +27,4 @@ if __name__ == '__main__':
     argument_parser.add_argument('-sy', '--size_y', type=int, default=512, help='New y size (height) of img')
     args = argument_parser.parse_args()
 
-    run(args)
+    resize_images(args.path_img, args.path_output, args.size_x, args.size_y)

@@ -6,17 +6,16 @@ import re
 import pandas as pd
 from time import sleep
 
-
 base_url = 'https://api.scryfall.com'
 
-def run(args):
+def get_artwork(path_output='./data/raw_images/', start_idx=0, max_cards=1000):
 
     with open(os.path.join('data', 'card_info', 'name_manacost_type_text_pt.txt'), 'r') as fh:
         arr_cards = fh.readlines()
 
     arr_dict_card_info = []
     for idx, card_txt_line in enumerate(arr_cards):
-        if idx <= args.start_idx:
+        if idx <= start_idx:
             continue
         # Process card text to retrieve card name
         card_txt_line = card_txt_line.replace('\n', '')
@@ -51,7 +50,7 @@ def run(args):
         # Download cropped art
         try: 
             url_art_crop = r.json()['image_uris']['art_crop']
-            path_img = wget.download(url_art_crop, out=args.path_output)
+            path_img = wget.download(url_art_crop, out=path_output)
             arr_dict_card_info.append({
                 'card_txt_line': card_txt_line,
                 'path_img': path_img
@@ -64,15 +63,15 @@ def run(args):
         # Sleep for 500ms to avoid sending to many requests
         sleep(0.5)
         # stop if we reached the number of max. cards
-        if idx == args.max_cards:
+        if idx == max_cards:
             break
     
     # save card metadata
     df_images = pd.DataFrame(arr_dict_card_info)
     df_images.to_csv(
         os.path.join(
-            args.path_output,
-            'card_images_{}_{}.csv'.format(args.start_idx, args.start_idx+args.max_cards)
+            path_output,
+            'card_images_{}_{}.csv'.format(start_idx, start_idx+max_cards)
             ), 
         sep=';', 
         index_label='index'
@@ -89,4 +88,4 @@ if __name__ == '__main__':
 
     args = argument_parser.parse_args()
 
-    run(args)
+    get_artwork(args.path_output, args.start_idx, args.max_cards)
