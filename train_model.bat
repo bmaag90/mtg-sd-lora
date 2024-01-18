@@ -16,5 +16,4 @@ accelerate launch diffusers\examples\text_to_image\train_text_to_image_lora.py ^
 --checkpointing_steps=50 ^
 --validation_prompt="magic the gathering card artwork liliana" ^
 --seed=1337 ^
---mixed_precision="fp16" ^
-::--resume_from_checkpoint="latest"
+--mixed_precision="fp16"
